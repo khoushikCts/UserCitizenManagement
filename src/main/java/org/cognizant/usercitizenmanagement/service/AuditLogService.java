@@ -48,6 +48,9 @@ import org.cognizant.usercitizenmanagement.dao.AuditLogRepository;
 import org.cognizant.usercitizenmanagement.entity.AuditLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -84,7 +87,7 @@ public class AuditLogService {
         auditRepo.save(log);
     }
 
-    public List<AuditLog> getAllLogs() {
-        return auditRepo.findAll();
+    public Page<AuditLog> getAllLogs(Pageable pageable) {
+        return auditRepo.findAll(pageable);
     }
 }

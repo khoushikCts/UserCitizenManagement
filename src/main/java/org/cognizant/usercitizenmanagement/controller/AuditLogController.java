@@ -7,7 +7,11 @@ import org.cognizant.usercitizenmanagement.entity.User;
 import org.cognizant.usercitizenmanagement.service.AuditLogService;
 import org.cognizant.usercitizenmanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -23,8 +27,13 @@ public class AuditLogController {
 
     // ✅ GET ALL LOGS
     @GetMapping("/GetAllLogs")
-    public List<AuditLog> getAllLogs() {
-        return auditLogService.getAllLogs();
+    public Page<AuditLog> getAllLogs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "timestamp") String sortBy) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+        return auditLogService.getAllLogs(pageable);
     }
 
     // ✅ CREATE LOG WITH VALIDATION
