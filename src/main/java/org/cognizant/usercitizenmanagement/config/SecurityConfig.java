@@ -32,15 +32,15 @@ public class SecurityConfig {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-//                                .requestMatchers("/api/users/login", "/api/users/createUser","/api/citizens/createCitizen").permitAll() // ALLOW THESE WITHOUT LOGIN
-//                                .requestMatchers("/api/citizens/createCitizen", "/api/citizens/update/{id}", "/api/documents/upload","/api/documents/delete/{id}", "/api/users/login").hasRole("CITIZEN")
-//                                .requestMatchers("/api/logs/GetAllLogs", "/api/logs/CreateLog").hasRole("AUDITOR")
-//                                .requestMatchers("/api/compliance-records/**").hasRole("COMPLIANCE")
-//                                .requestMatchers("/api/citizens/getCitizenById/{id}", "/api/citizens/getAllCitizens", "/api/citizens/delete/{id}", "/api/documents/getDocById/{id}").hasRole("OFFICER")
-//                                .requestMatchers("/api/users/getByUserId/{id}", "/api/users/getAllUsers","/api/users/update/{id}", "/api/users/delete/{id}").hasRole("MANAGER")
-//                                .requestMatchers("/api/users/**").hasRole("ADMIN")
-//                                .anyRequest().authenticated() // LOCK EVERYTHING ELSE
-                                .anyRequest().permitAll()
+                                .requestMatchers("/api/users/login", "/api/users/createUser","/api/citizens/createCitizen").permitAll() // ALLOW THESE WITHOUT LOGIN
+                                .requestMatchers("/api/citizens/createCitizen", "/api/citizens/update/{id}", "/api/documents/upload","/api/documents/delete/{id}", "/api/users/login").hasRole("CITIZEN")
+                                .requestMatchers("/api/logs/GetAllLogs").hasRole("AUDITOR")
+                                .requestMatchers("/api/compliance-records/**").hasRole("COMPLIANCE")
+                                .requestMatchers("/api/citizens/getCitizenById/{id}", "/api/citizens/getAllCitizens", "/api/citizens/delete/{id}", "/api/documents/getDocById/{id}").hasRole("OFFICER")
+                                .requestMatchers("/api/users/getByUserId/{id}", "/api/users/getAllUsers","/api/users/update/{id}", "/api/users/delete/{id}").hasRole("MANAGER")
+                                .requestMatchers("/api/users/**").hasRole("ADMIN")
+                                .anyRequest().authenticated() // LOCK EVERYTHING ELSE
+//                                .anyRequest().permitAll()
                 )
 
                 .httpBasic(Customizer.withDefaults())
