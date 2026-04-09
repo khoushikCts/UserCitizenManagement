@@ -19,19 +19,19 @@ public class EmergencyReportController {
     }
 
     // CREATE REPORT
-    @PostMapping
+    @PostMapping("/createreport")
     public EmergencyReportResponseDTO createReport(@RequestBody EmergencyReportRequestDTO requestDTO) {
         return service.createReport(requestDTO);
     }
 
     // GET ALL REPORTS
-    @GetMapping
+    @GetMapping("/getallreports")
     public List<EmergencyReportResponseDTO> getAllReports() {
         return service.getAllReports();
     }
 
     // GET REPORT BY ID
-    @GetMapping("/{id}")
+    @GetMapping("/getreportbyid/{id}")
     public EmergencyReportResponseDTO getReportById(@PathVariable int id) {
         return service.getReportById(id);
     }
@@ -42,7 +42,7 @@ public class EmergencyReportController {
         return service.getReportWithCitizen(id);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public String deleteReport(@PathVariable int id) {
         return service.deleteReport(id);
     }
