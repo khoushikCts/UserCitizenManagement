@@ -54,11 +54,11 @@ public class SecurityConfig {
                         // 4. DATA VIEWING (The large union of Auditor, Compliance, Officer, Manager)
                         .requestMatchers("/api/citizens/getCitizenById/**", "/api/citizens/getAllCitizens",
                                 "/api/documents/getDocById/**", "/api/reports/getallreports",
-                                "/api/reports/getreportbyid/**", "/api/reports/*/details")
+                                "/api/reports/getreportbyid/**", "/api/reports/*/details","/api/users/getUSerById/**")
                         .hasAnyRole("AUDITOR", "COMPLIANCE", "OFFICER", "MANAGER")
 
                         // 5. OFFICER & MANAGER SPECIFIC (Staff Union)
-                        .requestMatchers("/api/citizens/delete/**", "/api/users/getUSerById/**")
+                        .requestMatchers("/api/citizens/delete/**")
                         .hasAnyRole("OFFICER", "MANAGER")
 
                         // 6. MANAGER ONLY (Administrative/Destructive actions)
