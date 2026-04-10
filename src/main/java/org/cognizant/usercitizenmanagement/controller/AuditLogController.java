@@ -36,24 +36,24 @@ public class AuditLogController {
         return auditLogService.getAllLogs(pageable);
     }
 
-    // ✅ CREATE LOG WITH VALIDATION
-//    @PostMapping("/CreateLog")
-//    public AuditLog createLog(
-//            @Valid @RequestBody AuditLogRequestDTO requestDTO) {
-//
-//        // Load User using userId from DTO
-//        User user = userService.getUserById(requestDTO.getUserId());
-//
-//        // Map DTO → Entity
-//        AuditLog log = new AuditLog();
-//        log.setUser(user);
-//        log.setAction(requestDTO.getAction());
-//        log.setResource(requestDTO.getResource());
-//        log.setTimestamp(requestDTO.getTimestamp());
-//        log.setIpAddress(requestDTO.getIpAddress());
-//        log.setDetails(requestDTO.getDetails());
-//
-//        // Save using service
-//        return auditLogService.logAction(log);
-//    }
+//     ✅ CREATE LOG WITH VALIDATION
+    @PostMapping("/CreateLog")
+    public AuditLog createLog(
+            @Valid @RequestBody AuditLogRequestDTO requestDTO) {
+
+        // Load User using userId from DTO
+        User user = userService.getUserById(requestDTO.getUserId());
+
+        // Map DTO → Entity
+        AuditLog log = new AuditLog();
+        log.setUser(user);
+        log.setAction(requestDTO.getAction());
+        log.setResource(requestDTO.getResource());
+        log.setTimestamp(requestDTO.getTimestamp());
+        log.setIpAddress(requestDTO.getIpAddress());
+        log.setDetails(requestDTO.getDetails());
+
+        // Save using service
+        return auditLogService.logAction(log);
+    }
 }
