@@ -48,7 +48,7 @@ public class SecurityConfig {
                         // 3. LOG ACCESS (Auditor + Compliance + Manager)
                         .requestMatchers("/api/logs/**")
                         .access(AuthorizationManagers.anyOf(
-                                AuthorityAuthorizationManager.hasAnyRole("AUDITOR", "COMPLIANCE", "MANAGER")
+                                AuthorityAuthorizationManager.hasAnyRole("AUDITOR", "COMPLIANCE", "MANAGER","OFFICER")
                         ))
 
                         // 4. DATA VIEWING (The large union of Auditor, Compliance, Officer, Manager)
