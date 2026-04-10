@@ -36,7 +36,7 @@ public class AuditLogController {
         return auditLogService.getAllLogs(pageable);
     }
 
-
+    // ✅ CREATE LOG WITH VALIDATION
 //    @PostMapping("/CreateLog")
 //    public AuditLog createLog(
 //            @Valid @RequestBody AuditLogRequestDTO requestDTO) {

@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.authorization.AuthorizationManagers;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,17 +34,40 @@ public class SecurityConfig {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/users/login", "/api/users/createUser","/api/citizens/createCitizen").permitAll() // ALLOW THESE WITHOUT LOGIN
-                                .requestMatchers("/api/citizens/createCitizen", "/api/citizens/update/{id}", "/api/documents/upload","/api/documents/delete/{id}", "/api/users/login").hasRole("CITIZEN")
-                                .requestMatchers("/api/logs/GetAllLogs").hasRole("AUDITOR")
-                                .requestMatchers("/api/compliance-records/**").hasRole("COMPLIANCE")
-                                .requestMatchers("/api/citizens/getCitizenById/{id}", "/api/citizens/getAllCitizens", "/api/citizens/delete/{id}", "/api/documents/getDocById/{id}").hasRole("OFFICER")
-                                .requestMatchers("/api/users/getByUserId/{id}", "/api/users/getAllUsers","/api/users/update/{id}", "/api/users/delete/{id}").hasRole("MANAGER")
-                                .requestMatchers("/api/users/**").hasRole("ADMIN")
-                                .anyRequest().authenticated() // LOCK EVERYTHING ELSE
-//                                .anyRequest().permitAll()
-                )
+                        // 1. PUBLIC ACCESS (No login required)
+                        .requestMatchers("/api/users/login", "/api/users/createUser", "/api/citizens/createCitizen")
+                        .permitAll()
 
+                        // 2. CITIZEN ROLE
+                        // Covers profile updates, document uploads/deletes, and report creation
+                        .requestMatchers("/api/users/update/**", "/api/citizens/update/**",
+                                "/api/documents/upload", "/api/documents/delete/**",
+                                "/api/reports/createreport")
+                        .hasRole("CITIZEN")
+
+                        // 3. LOG ACCESS (Auditor + Compliance + Manager)
+                        .requestMatchers("/api/logs/**")
+                        .access(AuthorizationManagers.anyOf(
+                                AuthorityAuthorizationManager.hasAnyRole("AUDITOR", "COMPLIANCE", "MANAGER")
+                        ))
+
+                        // 4. DATA VIEWING (The large union of Auditor, Compliance, Officer, Manager)
+                        .requestMatchers("/api/citizens/getCitizenById/**", "/api/citizens/getAllCitizens",
+                                "/api/documents/getDocById/**", "/api/reports/getallreports",
+                                "/api/reports/getreportbyid/**", "/api/reports/*/details")
+                        .hasAnyRole("AUDITOR", "COMPLIANCE", "OFFICER", "MANAGER")
+
+                        // 5. OFFICER & MANAGER SPECIFIC (Staff Union)
+                        .requestMatchers("/api/citizens/delete/**", "/api/users/getUSerById/**")
+                        .hasAnyRole("OFFICER", "MANAGER")
+
+                        // 6. MANAGER ONLY (Administrative/Destructive actions)
+                        .requestMatchers("/api/users/getAllUsers", "/api/users/delete/**", "/api/reports/delete/**")
+                        .hasRole("MANAGER")
+
+                        .anyRequest().authenticated()
+                ) // LOCK EVERYTHING ELSE
+//                                .anyRequest().permitAll()
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
