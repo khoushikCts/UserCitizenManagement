@@ -28,50 +28,47 @@ public class SecurityConfig {
     @Autowired
     JwtFilter jwtFilter;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // 1. PUBLIC ACCESS (No login required)
+                        // 1. PUBLIC ACCESS
                         .requestMatchers("/api/users/login", "/api/users/createUser", "/api/citizens/createCitizen")
                         .permitAll()
 
-                        // 2. CITIZEN ROLE
-                        // Covers profile updates, document uploads/deletes, and report creation
+                        // 2. LOG ACCESS (Auditor + Compliance + Manager + Officer)
+                        .requestMatchers("/api/logs/**")
+                        .hasAnyRole("AUDITOR", "COMPLIANCE", "MANAGER", "OFFICER")
+
+                        // 3. CITIZEN SPECIFIC (Actions only a Citizen does for themselves)
                         .requestMatchers("/api/users/update/**", "/api/citizens/update/**",
                                 "/api/documents/upload", "/api/documents/delete/**",
                                 "/api/reports/createreport")
                         .hasRole("CITIZEN")
 
-                        // 3. LOG ACCESS (Auditor + Compliance + Manager)
-                        .requestMatchers("/api/logs/**")
-                        .access(AuthorizationManagers.anyOf(
-                                AuthorityAuthorizationManager.hasAnyRole("AUDITOR", "COMPLIANCE", "MANAGER","OFFICER")
-                        ))
+                        // 4. SHARED ACCESS: GET CITIZEN BY ID (Citizen + Staff roles)
+                        // We move this here so that BOTH the Citizen and the Staff can access it.
+                        .requestMatchers("/api/citizens/getCitizenById/**")
+                        .hasAnyRole("CITIZEN", "AUDITOR", "COMPLIANCE", "OFFICER", "MANAGER")
 
-                        // 4. DATA VIEWING (The large union of Auditor, Compliance, Officer, Manager)
-                        .requestMatchers("/api/citizens/getCitizenById/**", "/api/citizens/getAllCitizens",
+                        // 5. STAFF DATA VIEWING (Excluding the individual Citizen)
+                        .requestMatchers("/api/citizens/getAllCitizens",
                                 "/api/documents/getDocById/**", "/api/reports/getallreports",
-                                "/api/reports/getreportbyid/**", "/api/reports/*/details","/api/users/getUSerById/**")
+                                "/api/reports/getreportbyid/**", "/api/reports/*/details",
+                                "/api/users/getUSerById/**")
                         .hasAnyRole("AUDITOR", "COMPLIANCE", "OFFICER", "MANAGER")
 
-                        // 5. OFFICER & MANAGER SPECIFIC (Staff Union)
-                        .requestMatchers("/api/citizens/delete/**")
+                        // 6. OFFICER & MANAGER SPECIFIC
+                        .requestMatchers("/api/citizens/delete/**", "/api/citizens/updateStatus/**")
                         .hasAnyRole("OFFICER", "MANAGER")
 
-                        // 6. MANAGER ONLY (Administrative/Destructive actions)
+                        // 7. MANAGER ONLY (Administrative)
                         .requestMatchers("/api/users/getAllUsers", "/api/users/delete/**", "/api/reports/delete/**")
                         .hasRole("MANAGER")
 
-                        // 5. OFFICER SPECIFIC
-                        .requestMatchers("/api/citizens/delete/**", "/api/citizens/updateStatus/**")
-                        .hasRole("OFFICER")
-
                         .anyRequest().authenticated()
-                ) // LOCK EVERYTHING ELSE
-//                                .anyRequest().permitAll()
+                )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
