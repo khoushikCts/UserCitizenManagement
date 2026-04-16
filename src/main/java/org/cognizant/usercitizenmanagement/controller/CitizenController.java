@@ -48,4 +48,14 @@ public class CitizenController {
     public void deleteCitizen(@PathVariable int id) {
         citizenService.deleteCitizen(id);
     }
+
+    @PatchMapping("/updateStatus/{id}")
+    public Citizen updateCitizenStatus(@PathVariable int id, @RequestParam org.cognizant.usercitizenmanagement.Enum.CitizenStatus status) {
+        Citizen existing = citizenService.getCitizenById(id);
+        if (existing != null) {
+            existing.setStatus(status);
+            return citizenService.updateCitizen(id, existing);
+        }
+        return null;
+    }
 }

@@ -65,6 +65,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/getAllUsers", "/api/users/delete/**", "/api/reports/delete/**")
                         .hasRole("MANAGER")
 
+                        // 5. OFFICER SPECIFIC
+                        .requestMatchers("/api/citizens/delete/**", "/api/citizens/updateStatus/**")
+                        .hasRole("OFFICER")
+
                         .anyRequest().authenticated()
                 ) // LOCK EVERYTHING ELSE
 //                                .anyRequest().permitAll()

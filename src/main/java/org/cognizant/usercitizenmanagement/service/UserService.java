@@ -1,7 +1,11 @@
 package org.cognizant.usercitizenmanagement.service;
 
 import org.cognizant.usercitizenmanagement.dao.UserRepository;
+import org.cognizant.usercitizenmanagement.dao.CitizenRepository;
 import org.cognizant.usercitizenmanagement.entity.User;
+import org.cognizant.usercitizenmanagement.entity.Citizen;
+import org.cognizant.usercitizenmanagement.Enum.Role;
+import org.cognizant.usercitizenmanagement.Enum.CitizenStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CitizenRepository citizenRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -33,16 +40,23 @@ public class UserService {
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
 
-            // 2. Manually validate the raw password against the stored hash
-            // passwordEncoder.matches(rawPassword, encodedPassword)
+            // 2. Verification Check: If user is a CITIZEN, they must be VERIFIED to login
+            if (existingUser.getRole() == Role.CITIZEN) {
+                Citizen citizen = citizenRepository.findByUser(existingUser);
+                if (citizen == null || citizen.getStatus() != CitizenStatus.VERIFIED) {
+                    return "Verification Pending";
+                }
+            }
+
+            // 3. Manually validate the raw password against the stored hash
             if (passwordEncoder.matches(user.getPasswordHash(), existingUser.getPasswordHash())) {
 
-                // 3. If valid, generate the token using the stored user's details
+                // 4. If valid, generate the token using the stored user's details
                 return jwtService.generateToken(existingUser.getEmail(), existingUser.getRole().name());
             }
         }
 
-        return "fail";
+        return "Login Failed";
     }
 
     public User getUserById(int userId) {
@@ -54,7 +68,6 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        // Ensure we re-hash if the password was changed, or handle partially
         return userRepository.save(user);
     }
 
