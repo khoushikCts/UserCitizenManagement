@@ -60,11 +60,11 @@ public class SecurityConfig {
                         .hasAnyRole("AUDITOR", "COMPLIANCE", "OFFICER", "MANAGER")
 
                         // 6. OFFICER & MANAGER SPECIFIC
-                        .requestMatchers("/api/citizens/delete/**", "/api/citizens/updateStatus/**")
+                        .requestMatchers("/api/users/getAllUsers","/api/citizens/delete/**", "/api/citizens/updateStatus/**")
                         .hasAnyRole("OFFICER", "MANAGER")
 
                         // 7. MANAGER ONLY (Administrative)
-                        .requestMatchers("/api/users/getAllUsers", "/api/users/delete/**", "/api/reports/delete/**")
+                        .requestMatchers( "/api/users/delete/**", "/api/reports/delete/**")
                         .hasRole("MANAGER")
 
                         .anyRequest().authenticated()
