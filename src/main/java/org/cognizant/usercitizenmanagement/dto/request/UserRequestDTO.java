@@ -1,4 +1,3 @@
-
 package org.cognizant.usercitizenmanagement.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -40,6 +39,10 @@ public class UserRequestDTO implements Serializable {
     private String phone;
 
     @NotBlank(message = "Password cannot be blank")
+    @Pattern(
+            regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{6,}$",
+            message = "Password must be at least 6 characters long and contain a mix of numbers, lowercase letters, uppercase letters, and symbols"
+    )
     private String passwordHash;
 
     @NotNull(message = "Status cannot be null")

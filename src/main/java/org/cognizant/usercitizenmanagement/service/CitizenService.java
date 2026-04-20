@@ -48,7 +48,7 @@ public class CitizenService {
         citizen.setGender(requestDTO.getGender());
         citizen.setAddress(requestDTO.getAddress());
         citizen.setContactInfo(requestDTO.getPhone()); // Mapping same phone here
-        citizen.setStatus(CitizenStatus.PENDING);    // Default hardcoded
+            // Default hardcoded
 
         return citizenRepository.save(citizen);
     }

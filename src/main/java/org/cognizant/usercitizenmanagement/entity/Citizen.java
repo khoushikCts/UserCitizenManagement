@@ -41,7 +41,7 @@ public class Citizen {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Status")
-    private CitizenStatus status;
+    private CitizenStatus status=CitizenStatus.PENDING;
 
     @OneToOne
     @JoinColumn(name = "UserID")

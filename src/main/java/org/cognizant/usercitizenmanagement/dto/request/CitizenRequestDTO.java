@@ -26,6 +26,10 @@ public class CitizenRequestDTO implements Serializable {
     private String email;
 
     @NotBlank(message = "Password cannot be blank")
+    @Pattern(
+            regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{6,}$",
+            message = "Password must be at least 6 characters long and contain a mix of numbers, lowercase letters, uppercase letters, and symbols"
+    )
     private String password;
 
     @NotBlank(message = "Phone cannot be blank")
