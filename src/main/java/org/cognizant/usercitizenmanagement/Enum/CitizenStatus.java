@@ -4,5 +4,6 @@ public enum CitizenStatus {
     ACTIVE,
     INACTIVE,
     VERIFIED,
-    PENDING
+    PENDING,
+    REJECTED
 }
