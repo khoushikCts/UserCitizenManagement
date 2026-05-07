@@ -41,6 +41,11 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    @GetMapping("/getUserIdByEmail")
+    public Integer getUserIdByEmail(@RequestParam String email) {
+        return userService.getUserIdByEmail(email);
+    }
+
     @GetMapping("/getAllUsers")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
