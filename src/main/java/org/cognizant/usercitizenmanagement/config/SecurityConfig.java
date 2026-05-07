@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // 1. PUBLIC ACCESS
-                        .requestMatchers("/api/users/login", "/api/users/createUser", "/api/citizens/createCitizen")
+                        .requestMatchers("/api/users/login", "/api/users/createUser", "/api/citizens/createCitizen","/api/documents/upload")
                         .permitAll()
 
                         // 2. LOG ACCESS (Auditor + Compliance + Manager + Officer)
@@ -43,18 +43,18 @@ public class SecurityConfig {
 
                         // 3. CITIZEN SPECIFIC (Actions only a Citizen does for themselves)
                         .requestMatchers("/api/users/update/**", "/api/citizens/update/**",
-                                "/api/documents/upload", "/api/documents/delete/**",
+                                 "/api/documents/delete/**",
                                 "/api/reports/createreport")
                         .hasRole("CITIZEN")
 
                         // 4. SHARED ACCESS: GET CITIZEN BY ID (Citizen + Staff roles)
                         // We move this here so that BOTH the Citizen and the Staff can access it.
-                        .requestMatchers("/api/citizens/getCitizenById/**")
+                        .requestMatchers("/api/citizens/getCitizenById/**","/api/reports/getallreports")
                         .hasAnyRole("CITIZEN", "AUDITOR", "COMPLIANCE", "OFFICER", "MANAGER")
 
                         // 5. STAFF DATA VIEWING (Excluding the individual Citizen)
                         .requestMatchers("/api/citizens/getAllCitizens",
-                                "/api/documents/getDocById/**", "/api/reports/getallreports",
+                                "/api/documents/getDocById/**",
                                 "/api/reports/getreportbyid/**", "/api/reports/*/details",
                                 "/api/users/getUSerById/**")
                         .hasAnyRole("AUDITOR", "COMPLIANCE", "OFFICER", "MANAGER")
