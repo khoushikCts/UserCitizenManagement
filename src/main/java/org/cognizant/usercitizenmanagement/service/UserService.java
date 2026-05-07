@@ -63,6 +63,11 @@ public class UserService {
         return userRepository.findById(userId).orElse(null);
     }
 
+    public Integer getUserIdByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(User::getUserId)
+                .orElse(null);
+    }
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
