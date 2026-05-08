@@ -1,5 +1,6 @@
 package org.cognizant.usercitizenmanagement.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,8 +20,24 @@ public class CitizenDocumentResponseDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer documentId;
+    
+    private Integer citizenId;
+    
     private DocType docType;
-    private String fileURI;
+
+    // Store original filename for identification
+    private String fileName;
+
+    // Instead of sending the actual bytes, we send a link
+    // that the frontend can use to download the file
+    private String downloadUrl;
+
     private VerificationStatus verificationStatus;
+    
     private LocalDateTime uploadedDate;
+    
+    // ✅ IMPORTANT: Exclude the actual file content from JSON serialization
+    // to prevent sending huge binary data in API responses
+    @JsonIgnore
+    private byte[] fileContent;
 }

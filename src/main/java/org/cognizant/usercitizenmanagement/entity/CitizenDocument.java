@@ -32,8 +32,12 @@ public class CitizenDocument {
     @Column(name = "DocType", nullable = false)
     private DocType docType;
 
-    @Column(name = "FileURI", nullable = false)
-    private String fileURI;
+    @Lob
+    @Column(name = "FileContent", nullable = false, columnDefinition = "LONGBLOB")
+    private byte[] fileContent;
+
+    @Column(name = "FileName")
+    private String fileName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "VerificationStatus", nullable = false)
