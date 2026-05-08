@@ -43,13 +43,13 @@ public class CitizenDocumentController {
         return ResponseEntity.ok(documentService.getDocumentById(id));
     }
 
-    // ✅ GET DOCUMENTS BY CITIZEN ID
-    @GetMapping("/citizen/{citizenId}")
-    public ResponseEntity<List<CitizenDocument>> getDocumentsByCitizenId(
-            @Positive(message = "Citizen ID must be greater than zero")
-            @PathVariable Integer citizenId) {
+    // ✅ GET DOCUMENTS BY USER ID
+    @GetMapping("/citizen/{userId}")
+    public ResponseEntity<List<CitizenDocument>> getDocumentsByUserId(
+            @Positive(message = "User ID must be greater than zero")
+            @PathVariable Integer userId) {
 
-        List<CitizenDocument> documents = documentService.getDocumentsByCitizenId(citizenId);
+        List<CitizenDocument> documents = documentService.getDocumentsByUserId(userId);
         return ResponseEntity.ok(documents);
     }
 

@@ -67,9 +67,9 @@ public class CitizenDocumentService {
         return documentRepository.save(document);
     }
 
-    // ✅ GET DOCUMENTS BY CITIZEN ID
-    public List<CitizenDocument> getDocumentsByCitizenId(Integer citizenId) {
-        return documentRepository.findByCitizen_CitizenId(citizenId);
+    // ✅ GET DOCUMENTS BY USER ID
+    public List<CitizenDocument> getDocumentsByUserId(Integer userId) {
+        return documentRepository.findByCitizen_User_UserId(userId);
     }
 
     // ✅ GET BY ID

@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface CitizenDocumentRepository extends JpaRepository<CitizenDocument, Integer> {
 
-    // ✅ FIND ALL DOCUMENTS BELONGING TO A SPECIFIC CITIZEN
-    List<CitizenDocument> findByCitizen_CitizenId(Integer citizenId);
+    // ✅ FIND ALL DOCUMENTS BELONGING TO THE USER'S LINKED CITIZEN RECORD
+    List<CitizenDocument> findByCitizen_User_UserId(Integer userId);
 }
