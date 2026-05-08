@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+import java.util.List;
+
 @Service
 public class CitizenDocumentService {
 
@@ -24,13 +26,11 @@ public class CitizenDocumentService {
     // ✅ UPLOAD DOCUMENT
     public CitizenDocument uploadDocument(CitizenDocumentRequestDTO requestDTO) {
 
-        // 1. Locate the Citizen associated with this document
         Citizen citizen = citizenRepository.findById(requestDTO.getCitizenId())
                 .orElseThrow(() ->
                         new RuntimeException("Citizen not found with ID: "
                                 + requestDTO.getCitizenId()));
 
-        // 2. Instantiate the Entity
         CitizenDocument document = new CitizenDocument();
         document.setCitizen(citizen);
         document.setDocType(requestDTO.getDocType());
@@ -65,6 +65,11 @@ public class CitizenDocumentService {
 
         // 6. Persist the record (including the BLOB) to MySQL
         return documentRepository.save(document);
+    }
+
+    // ✅ GET DOCUMENTS BY CITIZEN ID
+    public List<CitizenDocument> getDocumentsByCitizenId(Integer citizenId) {
+        return documentRepository.findByCitizen_CitizenId(citizenId);
     }
 
     // ✅ GET BY ID
