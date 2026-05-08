@@ -34,8 +34,7 @@ public class CitizenDocumentRequestDTO implements Serializable {
     @NotNull(message = "Verification status must not be null")
     private VerificationStatus verificationStatus;
 
-    // Explicit getters & setters (same style as others)
-
+    // Explicit getters & setters
     public Integer getCitizenId() { return citizenId; }
     public void setCitizenId(Integer citizenId) { this.citizenId = citizenId; }
 

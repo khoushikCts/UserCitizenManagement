@@ -7,6 +7,8 @@ import org.cognizant.usercitizenmanagement.entity.Citizen;
 import org.cognizant.usercitizenmanagement.entity.CitizenDocument;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CitizenDocumentService {
 
@@ -34,6 +36,11 @@ public class CitizenDocumentService {
         document.setVerificationStatus(requestDTO.getVerificationStatus());
 
         return documentRepository.save(document);
+    }
+
+    // ✅ GET DOCUMENTS BY CITIZEN ID
+    public List<CitizenDocument> getDocumentsByCitizenId(Integer citizenId) {
+        return documentRepository.findByCitizen_CitizenId(citizenId);
     }
 
     // ✅ GET BY ID

@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/documents")
 @Validated  // ✅ REQUIRED FOR PATH VARIABLE VALIDATION
@@ -37,6 +39,16 @@ public class CitizenDocumentController {
             @PathVariable int id) {
 
         return ResponseEntity.ok(documentService.getDocumentById(id));
+    }
+
+    // ✅ GET DOCUMENTS BY CITIZEN ID
+    @GetMapping("/citizen/{citizenId}")
+    public ResponseEntity<List<CitizenDocument>> getDocumentsByCitizenId(
+            @Positive(message = "Citizen ID must be greater than zero")
+            @PathVariable Integer citizenId) {
+
+        List<CitizenDocument> documents = documentService.getDocumentsByCitizenId(citizenId);
+        return ResponseEntity.ok(documents);
     }
 
     // ✅ DELETE (ID MUST BE POSITIVE)
