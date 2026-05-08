@@ -36,6 +36,9 @@ public class CitizenDocument {
     @Column(name = "FileContent", nullable = false, columnDefinition = "LONGBLOB")
     private byte[] fileContent;
 
+    @Column(name = "FileURI", nullable = false)
+    private String fileURI;
+
     @Column(name = "FileName")
     private String fileName;
 

@@ -50,7 +50,13 @@ public class CitizenDocumentService {
             document.setFileContent(binaryData);
 
             // 5. Save the original filename for easier downloading/identification
-            document.setFileName(requestDTO.getFileURI().getOriginalFilename());
+            String originalFileName = requestDTO.getFileURI().getOriginalFilename();
+            if (originalFileName == null || originalFileName.isBlank()) {
+                originalFileName = "uploaded-file";
+            }
+
+            document.setFileName(originalFileName);
+            document.setFileURI(originalFileName);
 
         } catch (IOException e) {
             // Handle potential issues reading the file stream
