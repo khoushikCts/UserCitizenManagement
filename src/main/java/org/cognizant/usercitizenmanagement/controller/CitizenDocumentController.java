@@ -52,6 +52,15 @@ public class CitizenDocumentController {
         List<CitizenDocument> documents = documentService.getDocumentsByUserId(userId);
         return ResponseEntity.ok(documents);
     }
+    // ✅ GET DOCUMENTS BY CITIZEN ID
+    @GetMapping("/getDocumentByCitizenId/{citizenId}")
+    public ResponseEntity<List<CitizenDocument>> getDocumentsByCitizenId(
+            @Positive(message = "Citizen ID must be greater than zero")
+            @PathVariable Integer citizenId) {
+
+        List<CitizenDocument> documents = documentService.getDocumentsByCitizenId(citizenId);
+        return ResponseEntity.ok(documents);
+    }
 
     // ✅ DELETE (ID MUST BE POSITIVE)
     @DeleteMapping("/delete/{id}")

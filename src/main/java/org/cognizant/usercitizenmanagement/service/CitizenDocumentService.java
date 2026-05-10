@@ -71,6 +71,10 @@ public class CitizenDocumentService {
     public List<CitizenDocument> getDocumentsByUserId(Integer userId) {
         return documentRepository.findByCitizen_User_UserId(userId);
     }
+    // ✅ GET DOCUMENTS BY CITIZEN ID
+    public List<CitizenDocument> getDocumentsByCitizenId(Integer citizenId) {
+        return documentRepository.findByCitizen_CitizenId(citizenId);
+    }
 
     // ✅ GET BY ID
     public CitizenDocument getDocumentById(int docId) {
