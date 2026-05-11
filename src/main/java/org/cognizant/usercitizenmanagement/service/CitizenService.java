@@ -67,6 +67,18 @@ public class CitizenService {
             existing.setAddress(citizenDetails.getAddress());
             existing.setContactInfo(citizenDetails.getContactInfo());
             existing.setStatus(citizenDetails.getStatus());
+            
+            // ✅ AUTO-UPDATE USER STATUS BASED ON CITIZEN STATUS
+            User linkedUser = existing.getUser();
+            if (linkedUser != null) {
+                if (citizenDetails.getStatus() == CitizenStatus.VERIFIED) {
+                    linkedUser.setStatus(UserStatus.ACTIVE);
+                } else {
+                    linkedUser.setStatus(UserStatus.INACTIVE);
+                }
+                userRepository.save(linkedUser);
+            }
+            
             return citizenRepository.save(existing);
         }
         return null;

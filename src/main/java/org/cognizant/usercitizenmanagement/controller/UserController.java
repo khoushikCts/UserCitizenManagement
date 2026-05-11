@@ -7,6 +7,8 @@ import org.cognizant.usercitizenmanagement.entity.User;
 import org.cognizant.usercitizenmanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -32,9 +34,20 @@ public class UserController {
         return userService.createUser(user);
     }
     @PostMapping("/login")
-    public String UserLoginValidation(@RequestBody  User user){
+    public ResponseEntity<?> UserLoginValidation(@RequestBody  User user){
         System.out.println(user.getEmail()+" "+user.getPasswordHash());
-        return userService.UserLoginValidation(user);
+        var resp = userService.UserLoginValidation(user);
+        if (resp == null) {
+            // Could be verification pending or invalid credentials
+            // Check if user exists to decide message
+            var existingUser = userService.getUserByEmail(user.getEmail());
+            if (existingUser != null && existingUser.getRole() == org.cognizant.usercitizenmanagement.Enum.Role.CITIZEN) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Verification Pending");
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login Failed");
+        }
+
+        return ResponseEntity.ok(resp);
     }
     @GetMapping("/getByUserId/{id}")
     public User getUserById(@PathVariable int id) {

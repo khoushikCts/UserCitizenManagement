@@ -33,18 +33,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public String UserLoginValidation(User user) {
+    public org.cognizant.usercitizenmanagement.dto.response.LoginResponseDTO UserLoginValidation(User user) {
         // 1. Fetch the user from the database by email
         Optional<User> existingUserOpt = userRepository.findByEmail(user.getEmail());
-
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
 
             // 2. Verification Check: If user is a CITIZEN, they must be VERIFIED to login
+            Citizen citizen = null;
             if (existingUser.getRole() == Role.CITIZEN) {
-                Citizen citizen = citizenRepository.findByUser(existingUser);
+                citizen = citizenRepository.findByUser(existingUser);
                 if (citizen == null || citizen.getStatus() != CitizenStatus.VERIFIED) {
-                    return "Verification Pending";
+                    return null; // Caller will interpret as verification pending
                 }
             }
 
@@ -52,11 +52,33 @@ public class UserService {
             if (passwordEncoder.matches(user.getPasswordHash(), existingUser.getPasswordHash())) {
 
                 // 4. If valid, generate the token using the stored user's details
-                return jwtService.generateToken(existingUser.getEmail(), existingUser.getRole().name());
+                String token = jwtService.generateToken(existingUser.getEmail(), existingUser.getRole().name());
+
+                // 5. Build response DTO including citizen details when available
+                org.cognizant.usercitizenmanagement.dto.response.UserLoginDTO userDto = new org.cognizant.usercitizenmanagement.dto.response.UserLoginDTO();
+                userDto.setUserId(existingUser.getUserId());
+                userDto.setEmail(existingUser.getEmail());
+                userDto.setName(existingUser.getName());
+                userDto.setRole(existingUser.getRole());
+                userDto.setPhone(existingUser.getPhone());
+
+                if (citizen != null) {
+                    userDto.setVerificationStatus(citizen.getStatus());
+                    userDto.setCitizenId(citizen.getCitizenId());
+                    userDto.setAddress(citizen.getAddress());
+                    userDto.setGender(citizen.getGender());
+                    userDto.setDob(citizen.getDob());
+                }
+
+                org.cognizant.usercitizenmanagement.dto.response.LoginResponseDTO resp = new org.cognizant.usercitizenmanagement.dto.response.LoginResponseDTO();
+                resp.setToken(token);
+                resp.setUser(userDto);
+
+                return resp;
             }
         }
 
-        return "Login Failed";
+        return null;
     }
 
     public User getUserById(int userId) {
@@ -67,6 +89,9 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .map(User::getUserId)
                 .orElse(null);
+    }
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
     }
     public List<User> getAllUsers() {
         return userRepository.findAll();
